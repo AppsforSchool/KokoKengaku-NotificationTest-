@@ -100,6 +100,31 @@ document.addEventListener("DOMContentLoaded", () => {
           await setupMemberSnapshots(talkId);
 
           getAllTalkData(talkId);
+
+          window.OneSignalDeferred = window.OneSignalDeferred || [];
+          window.OneSignalDeferred.push(function(OneSignal) {
+            OneSignal.init({
+              appId: "",
+              allowLocalhostAsSecureOrigin: true,
+            });
+
+            const notifyBtn = document.getElementById("notification-button");
+            if (notifyBtn) {
+              notifyBtn.addEventListener("click", async () => {
+                try {
+                  await OneSignal.Notifications.requestPermission();
+
+                  await OneSignal.User.addTag("talk_id", talkId);
+                  alert("通知がオンになりました。");
+                  notifyBtn.style.display = "none";
+                } catch (error) {
+                  alert(error);
+                }
+              });
+            }
+          });
+
+            
           
           loadingOverlay.classList.add("hidden");
       } else {
